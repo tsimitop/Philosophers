@@ -3,7 +3,7 @@
 ################################################################################
 CC = cc
 DEBUG = -g
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror #-fsanitize=thread
 LDFLAGS := -lpthread
 
 ################################################################################
@@ -12,19 +12,20 @@ LDFLAGS := -lpthread
 
 NAME = philo
 SRC =	main.c\
-		parse.c
+		parse.c\
+		time.c
 OBJ = $(SRC:.c=.o)
 
 all : $(NAME)
 
 $(NAME) : $(OBJ)
 	@echo "Building $(NAME)"
-	@$(CC) $(DEBUG) $^ $(LDFLAGS) -o $@
+	@$(CC) $(CFLAGS) $(DEBUG) $^ $(LDFLAGS) -o $@
 	@echo "\033[34m$(NAME) built successfully!\033[0m"
 
 $(OBJ) : %.o : %.c
 	@echo "Building $(OBJ)"
-	@$(CC) -c $(CFLAGS) $(LDFLAGS) $< -o $@
+	@$(CC) -c $(CFLAGS) $(DEBUG) $(LDFLAGS) $< -o $@
 	@echo "Built $(OBJ)"
 
 clean :
