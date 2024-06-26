@@ -13,7 +13,11 @@ LDFLAGS := -lpthread
 NAME = philo
 SRC =	main.c\
 		parse.c\
-		time.c
+		time.c\
+		utils.c\
+		actions.c\
+		thread.c
+
 OBJ = $(SRC:.c=.o)
 
 all : $(NAME)

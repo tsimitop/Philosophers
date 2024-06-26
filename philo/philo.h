@@ -27,12 +27,15 @@ typedef struct s_shared
 	int						time_to_sleep;
 	int						times_to_eat;
 	bool					death_occured;
-	struct s_philosopher	**philo;
+	struct s_philosopher	*philo;
+	int						thread_idx;
+	pthread_mutex_t			*forks;
 	long long				initial_timestamp;
 } t_shared;
 
 typedef struct s_philosopher
 {
+	pthread_t			philo_thread;
 	enum e_state		state;
 	bool				dead;
 	int					ate_x_times;
@@ -42,20 +45,29 @@ typedef struct s_philosopher
 	pthread_mutex_t		*right_fork;
 } t_philosopher;
 
-// void	error_exit(char *msg);
-
 // parse.c
+bool	ft_isnumber(char **argv);
 bool	ft_isnegative(char **argv);
-int		ft_atoi(char *str);
 bool	ft_hasalpha(char *str);
 bool	ft_isdigit(int c);
-bool	ft_isnumber(char **argv);
+int		ft_atoi(char *str);
+bool	invalid_input(int argc, char **argv);
 
 // time.c
-int	init_time(void);
+int		init_time(void);
 
 //init
 void	init_shared(t_shared *info, char **argv);
-void	init_philosopher(t_shared *info, t_philosopher *philo);
+void	init_philosopher(t_shared *info, int idx);
+int		init_thread(t_shared *info, t_philosopher *philo);
+
+//utils.c
+void	ft_bzero(void *s, size_t n);
+void	*ft_calloc(size_t count, size_t size);
+
+//actions.c
+// void	*routine(t_shared *info);
+// void	routine(void);
+void	*routine(void *ptr);
 
 #endif
