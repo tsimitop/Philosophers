@@ -28,13 +28,15 @@ typedef struct s_shared
 	int						times_to_eat;
 	bool					death_occured;
 	struct s_philosopher	*philo;
-	int						thread_idx;
+	int						meals_remaining;
+	// int						thread_idx;
 	pthread_mutex_t			*forks;
 	long long				initial_timestamp;
 } t_shared;
 
 typedef struct s_philosopher
 {
+	int					thread_idx;
 	pthread_t			philo_thread;
 	enum e_state		state;
 	bool				dead;
@@ -43,6 +45,7 @@ typedef struct s_philosopher
 	long long			time_since_last_meal;
 	pthread_mutex_t		*left_fork;
 	pthread_mutex_t		*right_fork;
+	t_shared			*shared_info;
 } t_philosopher;
 
 // parse.c
@@ -59,7 +62,7 @@ int		init_time(void);
 //init
 void	init_shared(t_shared *info, char **argv);
 void	init_philosopher(t_shared *info, int idx);
-int		init_thread(t_shared *info, t_philosopher *philo);
+int		init_thread(t_shared *info);
 
 //utils.c
 void	ft_bzero(void *s, size_t n);

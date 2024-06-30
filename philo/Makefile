@@ -28,9 +28,9 @@ $(NAME) : $(OBJ)
 	@echo "\033[34m$(NAME) built successfully!\033[0m"
 
 $(OBJ) : %.o : %.c
-	@echo "Building $(OBJ)"
 	@$(CC) -c $(CFLAGS) $(DEBUG) $< -o $@
-	@echo "Built $(OBJ)"
+#@echo "Building $(OBJ)"
+#@echo "Built $(OBJ)"
 
 clean :
 	@echo "Removing $(OBJ)"

@@ -2,15 +2,15 @@
 //make && ./philo 5 800 200 200
 int	main(int argc, char **argv)
 {
-	t_shared		info;
-	t_philosopher	philo;
+	t_shared		*info;
 
 	if (invalid_input(argc, argv) == true)
 		return (1);
-	init_shared(&info, argv);
-	if (info.initial_timestamp < 0)
+	info = ft_calloc(1, sizeof(t_shared));
+	init_shared(info, argv);
+	if (info->initial_timestamp < 0)
 		return (1);
-	if (init_thread(&info, &philo))
+	if (init_thread(info))
 		return (1);
 	return (0);
 }
@@ -25,6 +25,9 @@ void	init_shared(t_shared *info, char **argv)
 		info->times_to_eat = ft_atoi(argv[5]);
 	else
 		info->times_to_eat = 2147483640;
+	info->meals_remaining = info->times_to_eat;
+	// printf("info->times_to_eat = %i\n", info->times_to_eat);
+	// printf("info->meals_remaining = %i\n", info->meals_remaining);
 	info->death_occured = false;
 	info->initial_timestamp = init_time();
 }
