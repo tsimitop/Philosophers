@@ -8,7 +8,7 @@ int	init_thread(t_shared *info)
 	info->philo = ft_calloc(info->philos_total, sizeof(t_philosopher));
 	if (!info->philo)
 		return (1);
-	info->forks = ft_calloc(info->philos_total, sizeof(pthread_mutex_t));
+	info->forks = ft_calloc(info->philos_total, sizeof(pthread_mutex_t *));
 	if (!info->philo)
 		return (free(info->philo), 1);
 	while (info->philos_total - (idx) > 0)
@@ -35,7 +35,7 @@ void	init_philosopher(t_shared *info, int idx)
 	info->philo[idx].dead = false;
 	info->philo[idx].ate_x_times = 0;
 	info->philo[idx].last_meal_timestamp = info->initial_timestamp;
-	info->philo[idx].time_since_last_meal = info->initial_timestamp;
+	info->philo[idx].time_since_last_meal = 0;
 	info->philo[idx].right_fork = &info->forks[idx];
 	info->philo[idx].left_fork = &info->forks[(idx + 1) % info->philos_total];
 	info->philo[idx].shared_info = info;

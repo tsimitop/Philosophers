@@ -7,6 +7,7 @@
 # include <stdbool.h>
 # include <sys/time.h>
 # include <pthread.h>
+# include <unistd.h>
 
 typedef enum e_state
 {
@@ -22,14 +23,13 @@ typedef struct s_philosopher	t_philosopher;
 typedef struct s_shared
 {
 	int						philos_total;
-	int						time_to_die;
-	int						time_to_eat;
-	int						time_to_sleep;
-	int						times_to_eat;
+	long long				time_to_die;
+	long long				time_to_eat;
+	long long				time_to_sleep;
+	long long				times_to_eat;
 	bool					death_occured;
 	struct s_philosopher	*philo;
 	int						meals_remaining;
-	// int						thread_idx;
 	pthread_mutex_t			*forks;
 	long long				initial_timestamp;
 } t_shared;
@@ -58,6 +58,7 @@ bool	invalid_input(int argc, char **argv);
 
 // time.c
 int		init_time(void);
+void	sleep_loop(t_philosopher *philosoph, t_state state, long long time);
 
 //init
 void	init_shared(t_shared *info, char **argv);
@@ -67,6 +68,7 @@ int		init_thread(t_shared *info);
 //utils.c
 void	ft_bzero(void *s, size_t n);
 void	*ft_calloc(size_t count, size_t size);
+long long	ft_atoll(const char *str);
 
 //actions.c
 // void	*routine(t_shared *info);
