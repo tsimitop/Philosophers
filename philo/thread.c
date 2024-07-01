@@ -36,7 +36,9 @@ void	init_philosopher(t_shared *info, int idx)
 	info->philo[idx].ate_x_times = 0;
 	info->philo[idx].last_meal_timestamp = info->initial_timestamp;
 	info->philo[idx].time_since_last_meal = 0;
+	// pthread_mutex_init(&info->forks[idx], NULL);
 	info->philo[idx].right_fork = &info->forks[idx];
+	// pthread_mutex_init(&info->forks[(idx + 1) % info->philos_total], NULL);
 	info->philo[idx].left_fork = &info->forks[(idx + 1) % info->philos_total];
 	info->philo[idx].shared_info = info;
 }
