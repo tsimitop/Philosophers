@@ -3,7 +3,7 @@
 ################################################################################
 CC = cc
 DEBUG = -g
-CFLAGS = -Wall -Wextra -Werror #-fsanitize=thread
+CFLAGS = -Wall -Wextra -Werror -fsanitize=thread
 LDFLAGS := -lpthread
 
 ################################################################################
@@ -33,12 +33,10 @@ $(OBJ) : %.o : %.c
 #@echo "Built $(OBJ)"
 
 clean :
-	@echo "Removing $(OBJ)"
 	@rm -f $(OBJ)
 	@echo "Removed $(OBJ)"
 
 fclean : clean
-	@echo "Removing $(NAME)"
 	@rm -f $(NAME)
 	@echo "Removed $(NAME)"
 

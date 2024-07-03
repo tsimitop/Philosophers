@@ -1,6 +1,6 @@
 #include "philo.h"
 
-int	init_time(void)
+long long	init_time(void)
 {
 	struct timeval	tv;
 
@@ -9,34 +9,44 @@ int	init_time(void)
 	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
+int	time_since_start(t_shared *info)
+{
+	int	current_time;
+
+	current_time = init_time() - info->initial_timestamp;
+	return (current_time);
+}
+
 void	sleep_loop(t_philosopher *philosoph, t_state state, long long time)
 {
-	long long	wake;
-	// int			g_time;
+	int	wake;
 
-	// g_time = init_time();
-	// printf("g_time = %i\n", g_time);
+	wake = 0;
 	if (state == SLEEPING)
-		wake = philosoph->shared_info->time_to_sleep + init_time();
+		wake = philosoph->shared_info->t_to_sleep + time_since_start(philosoph->shared_info);
+	else if (state == THINKING)
+		wake = philosoph->shared_info->t_to_sleep + time; //change
 	else if (state == EATING)
-		wake = philosoph->shared_info->time_to_eat + init_time();
-	usleep(time / 2);
-	if (state == SLEEPING)
+		wake = philosoph->shared_info->t_to_eat + time_since_start(philosoph->shared_info);
+// printf("philosoph->shared_info->t_to_sleep = %i\n", philosoph->shared_info->t_to_sleep);
+// printf("philosoph->shared_info->t_to_eat = %i\n", philosoph->shared_info->t_to_eat);
+// printf("time_since_start(philosoph->shared_info) = %i\n", time_since_start(philosoph->shared_info));
+// printf("philosoph->shared_info->t_to_sleep + time_since_start(philosoph->shared_info) = %i\n", philosoph->shared_info->t_to_sleep + time_since_start(philosoph->shared_info));
+// printf("WAKE = %i\n", wake);
+	if (state == SLEEPING || state == THINKING)
 	{
+		pthread_mutex_lock(philosoph->sleeping_lock);
+		usleep(time / 2);
 		while (wake > init_time())
 			usleep(50);
+		pthread_mutex_unlock(philosoph->sleeping_lock);
 	}
 	else if (state == EATING)
 	{
-// printf("wake = %lld\nphilosoph->shared_info->time_to_eat = %lld\n", wake, philosoph->shared_info->time_to_eat);
-// printf("time = %lld\n", time);
-		// wake = philosoph->shared_info->time_to_eat + (long long)init_time();
+		pthread_mutex_lock(philosoph->dining_lock);
+		usleep(time / 2);
 		while (wake > init_time())
 			usleep(50);
+		pthread_mutex_unlock(philosoph->dining_lock);
 	}
-	// else if (state == THINKING)
-	// {
-	// 	while (philosoph->shared_info->time_to_think < time)
-	// 		usleep(50);
-	// }
 }
