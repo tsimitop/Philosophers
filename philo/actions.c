@@ -11,43 +11,36 @@ static void	pick_up_fork(t_philosopher *phil)
 
 	r_fork = phil->thread_idx - 1;
 	l_fork = (phil->thread_idx) % phil->shared_info->philos_total;
-printf("phil->thread_idx = %i,\tr_fork = %i,\tl_fork = %i\n", phil->thread_idx, r_fork, l_fork);
+// printf("phil->thread_idx = %i r_fork = %i l_fork = %i\n", phil->thread_idx, r_fork, l_fork);
 	temp = 0;
-// 	if (phil->thread_idx % 2 == 0)
-// 	{
-// 		pthread_mutex_lock(phil->sleeping_lock);
-// cur_time = time_since_start(phil->shared_info);
-// printf(GREEN"BEFORE LOOP %lli %i is thinking\n"QUIT_COLOR, cur_time, phil->thread_idx);
-// 		sleep_loop(phil, THINKING, 1500000);
-// 		pthread_mutex_unlock(phil->sleeping_lock);
-// 	}
+	if (phil->thread_idx % 2 == 0)
+	{
+		cur_time = time_since_start(phil->shared_info);
+		printf(GREEN"%lli %i is thinking\n"QUIT_COLOR, cur_time, phil->thread_idx);
+		sleep_loop(phil, THINKING, 100);
+	}
 	while (1)
 	{
 		cur_time = time_since_start(phil->shared_info);
-printf("THREAD_IDX: %i\t(phil->thread_idx + 1) %% phil->shared_info->philos_total = %i\n", phil->thread_idx, (phil->thread_idx + 1) % phil->shared_info->philos_total);
-		if (pthread_mutex_lock(phil->shared_info->fork[r_fork]) == 0)
-		{
-printf("HIIIn\n");
-			printf(CYAN"%lli %i has taken right fork\n"QUIT_COLOR, cur_time, phil->thread_idx);
-// printf("phil->shared_info->fork[l_fork] = %p\n", &phil->shared_info->fork[l_fork]);
-// printf("pthread_mutex_lock(phil->shared_info->fork[l_fork]) = %i\n", pthread_mutex_lock(phil->shared_info->fork[l_fork]));
-			if (pthread_mutex_lock(phil->shared_info->fork[l_fork]) == 0)
-			{
-				printf(CYAN"%lli %i has taken left fork\n"QUIT_COLOR, cur_time, phil->thread_idx);
-				printf(BLUE"%lli %i is eating\n"QUIT_COLOR, cur_time, phil->thread_idx);
-				// pthread_mutex_lock(phil->shared_info->fork[r_fork]);
-				phil->last_meal_timestamp = cur_time;
-				phil->state = EATING;
-				sleep_loop(phil, phil->state, phil->shared_info->t_to_eat);
-				pthread_mutex_unlock(phil->shared_info->fork[r_fork]);
-printf("%lli %i has unlocked r_fork\n", cur_time, phil->thread_idx);
-				pthread_mutex_unlock(phil->shared_info->fork[l_fork]);
-printf("%lli %i has unlocked l_fork\n", cur_time, phil->thread_idx);
-			}
-		}
+		pthread_mutex_lock(phil->shared_info->fork[r_fork]);
+		printf(CYAN"%lli %i has taken right fork\n"QUIT_COLOR, cur_time, phil->thread_idx);
+		pthread_mutex_lock(phil->shared_info->fork[l_fork]);
+		printf(CYAN"%lli %i has taken left fork\n"QUIT_COLOR, cur_time, phil->thread_idx);
+		printf(BLUE"%lli %i is eating\n"QUIT_COLOR, cur_time, phil->thread_idx);
+		phil->last_meal_timestamp = cur_time;
+		pthread_mutex_lock(&phil->state_lock);
+		phil->state = EATING;
+		sleep_loop(phil, phil->state, phil->shared_info->t_to_eat);
+		pthread_mutex_unlock(&phil->state_lock);
+		pthread_mutex_unlock(phil->shared_info->fork[l_fork]);
+		pthread_mutex_unlock(phil->shared_info->fork[r_fork]);
 		printf(PURPLE"%lli %i is sleeping\n"QUIT_COLOR, cur_time, phil->thread_idx);
+		pthread_mutex_lock(&phil->state_lock);
 		phil[phil->thread_idx].state = SLEEPING;
+		pthread_mutex_unlock(&phil->state_lock);
+		pthread_mutex_lock(&phil->state_lock);
 		sleep_loop(phil, phil->state, phil->shared_info->t_to_sleep);
+		pthread_mutex_unlock(&phil->state_lock);
 		if (cur_time - phil->last_meal_timestamp > 50)
 		{
 			printf(GREEN"%lli %i is thinking\n"QUIT_COLOR, cur_time, phil->thread_idx);

@@ -1,6 +1,6 @@
 #include "philo.h"
 
-long long	init_time(void)
+time_t	init_time(void)
 {
 	struct timeval	tv;
 
@@ -9,7 +9,7 @@ long long	init_time(void)
 	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
-int	time_since_start(t_shared *info)
+time_t	time_since_start(t_shared *info)
 {
 	int	current_time;
 
@@ -17,36 +17,38 @@ int	time_since_start(t_shared *info)
 	return (current_time);
 }
 
-void	sleep_loop(t_philosopher *philosoph, t_state state, long long time)
+void	sleep_loop(t_philosopher *phil, t_state state, long long time)
 {
-	int	wake;
+	time_t	wake;
 
 	wake = 0;
+	// pthread_mutex_lock(&phil->state_lock);
 	if (state == SLEEPING)
-		wake = philosoph->shared_info->t_to_sleep + time_since_start(philosoph->shared_info);
+		wake = (phil->shared_info->t_to_sleep) + init_time();
 	else if (state == THINKING)
-		wake = philosoph->shared_info->t_to_sleep + time; //change
+		wake = time + init_time(); //change
 	else if (state == EATING)
-		wake = philosoph->shared_info->t_to_eat + time_since_start(philosoph->shared_info);
-// printf("philosoph->shared_info->t_to_sleep = %i\n", philosoph->shared_info->t_to_sleep);
-// printf("philosoph->shared_info->t_to_eat = %i\n", philosoph->shared_info->t_to_eat);
-// printf("time_since_start(philosoph->shared_info) = %i\n", time_since_start(philosoph->shared_info));
-// printf("philosoph->shared_info->t_to_sleep + time_since_start(philosoph->shared_info) = %i\n", philosoph->shared_info->t_to_sleep + time_since_start(philosoph->shared_info));
-// printf("WAKE = %i\n", wake);
+		wake = (phil->shared_info->t_to_eat) + init_time();
+// printf("wake = %li\tinit_time() = %li\n", wake, init_time());
 	if (state == SLEEPING || state == THINKING)
 	{
-		pthread_mutex_lock(philosoph->sleeping_lock);
+		// pthread_mutex_lock(&phil->sleeping_lock);
 		usleep(time / 2);
 		while (wake > init_time())
+		{
 			usleep(50);
-		pthread_mutex_unlock(philosoph->sleeping_lock);
+		}
+		// pthread_mutex_unlock(&phil->sleeping_lock);
 	}
 	else if (state == EATING)
 	{
-		pthread_mutex_lock(philosoph->dining_lock);
+		// pthread_mutex_lock(&phil->dining_lock);
 		usleep(time / 2);
 		while (wake > init_time())
+		{
 			usleep(50);
-		pthread_mutex_unlock(philosoph->dining_lock);
+		}
+		// pthread_mutex_unlock(&phil->dining_lock);
 	}
+	// pthread_mutex_unlock(&phil->state_lock);
 }

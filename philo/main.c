@@ -16,9 +16,9 @@ int	main(int argc, char **argv)
 int	init_shared(t_shared *info, char **argv)
 {
 	info->philos_total = ft_atoi(argv[1]);
-	info->t_to_die = ft_atoi(argv[2]);
-	info->t_to_eat = ft_atoi(argv[3]);
-	info->t_to_sleep = ft_atoi(argv[4]);
+	info->t_to_die = ft_atoll(argv[2]);
+	info->t_to_eat = ft_atoll(argv[3]);
+	info->t_to_sleep = ft_atoll(argv[4]);
 	if(argv[5])
 		info->times_to_eat = ft_atoi(argv[5]);
 	else

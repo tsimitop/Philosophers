@@ -33,9 +33,9 @@ typedef struct s_philosopher	t_philosopher;
 typedef struct s_shared
 {
 	int					philos_total;
-	int					t_to_die;
-	int					t_to_eat;
-	int					t_to_sleep;
+	time_t				t_to_die;
+	time_t				t_to_eat;
+	time_t				t_to_sleep;
 	int					times_to_eat;
 	bool				death_occured;
 	long long			initial_timestamp;
@@ -55,8 +55,9 @@ typedef struct s_philosopher
 	int					ate_x_times;
 	long long			last_meal_timestamp;
 	long long			time_since_last_meal;
-	pthread_mutex_t		*dining_lock;
-	pthread_mutex_t		*sleeping_lock;
+	pthread_mutex_t		dining_lock;
+	pthread_mutex_t		sleeping_lock;
+	pthread_mutex_t		state_lock;
 	t_shared			*shared_info;
 	// pthread_mutex_t		*fork;
 	// pthread_mutex_t		*l_fork;
@@ -71,9 +72,9 @@ int		ft_atoi(char *str);
 bool	invalid_input(int argc, char **argv);
 
 // time.c
-long long	init_time(void);
+time_t	init_time(void);
 void	sleep_loop(t_philosopher *philosoph, t_state state, long long time);
-int		time_since_start(t_shared *info);
+time_t		time_since_start(t_shared *info);
 
 //init
 int		init_shared(t_shared *info, char **argv);
