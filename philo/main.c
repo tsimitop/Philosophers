@@ -15,6 +15,8 @@ int	main(int argc, char **argv)
 	if (init_thread(&info))
 		return (1);
 	//NA TA KATASTREPSOOOOOOO KI ELEFTHEROSO
+	free(info.fork);
+	free(info.philo);
 	return (0);
 }
 
@@ -33,12 +35,12 @@ int init_philo(t_shared *info)
 		info->philo[idx].time_since_last_meal = 0;
 		info->philo[idx].shared_info = info;
 
-		info->philo[idx].r_fork_idx = (idx + 1) % info->philos_total;
-		info->philo[idx].l_fork_idx = idx;
-		if (pthread_mutex_init(&info->philo[idx].sleeping_lock, NULL) != 0)
-			return (printf("Failed to create thread\n"), 1);
-		if (pthread_mutex_init(&info->philo[idx].dining_lock, NULL) != 0)
-			return (printf("Failed to create thread\n"), 1);
+		info->philo[idx].r_fork_idx = idx;
+		info->philo[idx].l_fork_idx = (idx + 1) % info->philos_total;
+		// if (pthread_mutex_init(&info->philo[idx].sleeping_lock, NULL) != 0)
+		// 	return (printf("Failed to create thread\n"), 1);
+		// if (pthread_mutex_init(&info->philo[idx].dining_lock, NULL) != 0)
+		// 	return (printf("Failed to create thread\n"), 1);
 		// if (pthread_mutex_init(&info->philo[idx].state_lock, NULL) != 0)
 		// 	return (printf("Failed to create thread\n"), 1);
 		if (pthread_mutex_init(&info->fork[idx], NULL) != 0)
@@ -85,11 +87,11 @@ int	init_shared(t_shared *info, char **argv)
 	info->initial_timestamp = init_time();
 	if (info->initial_timestamp < 0)
 		return (1);
-	if (pthread_mutex_init(&info->death_lock, NULL) != 0)
-		return (printf("Mutex initialization failed\n"), 1);
-	if (pthread_mutex_init(&info->printer_lock, NULL) != 0)
-		return (pthread_mutex_destroy(&info->death_lock), 
-		printf("Mutex initialization failed\n"), 1);
+	// if (pthread_mutex_init(&info->death_lock, NULL) != 0)
+	// 	return (printf("Mutex initialization failed\n"), 1);
+	// if (pthread_mutex_init(&info->printer_lock, NULL) != 0)
+	// 	return (pthread_mutex_destroy(&info->death_lock), 
+	// 	printf("Mutex initialization failed\n"), 1);
 	// info->philo = ft_calloc(info->philos_total, sizeof(t_philosopher));
 	info->philo = (t_philosopher *)malloc(info->philos_total * sizeof(t_philosopher));
 	if (!info->philo)

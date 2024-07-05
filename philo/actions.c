@@ -6,12 +6,20 @@ static void	ft_eat(t_philosopher *phil)
 {
 	time_t	cur_time;
 
-	printf("phil->thread_idx = %i, phil->r_fork_idx = %i, phil->l_fork_idx = %i\n", phil->thread_idx, phil->r_fork_idx, phil->l_fork_idx);
-	pthread_mutex_lock(&phil->shared_info->fork[phil->l_fork_idx]);
+	// printf("phil->thread_idx = %i, phil->r_fork_idx = %i, phil->l_fork_idx = %i\n", phil->thread_idx, phil->r_fork_idx, phil->l_fork_idx);
+	if (phil->thread_idx % 2 == 0)
+		pthread_mutex_lock(&phil->shared_info->fork[phil->l_fork_idx]);
+	else
+		pthread_mutex_lock(&phil->shared_info->fork[phil->r_fork_idx]);
+
 	cur_time = time_since_start(phil->shared_info);
 	printf(CYAN"%li %i has taken left fork\n"QUIT_COLOR, cur_time, phil->thread_idx);
 
-	pthread_mutex_lock(&phil->shared_info->fork[phil->r_fork_idx]);
+	if (phil->thread_idx % 2 == 0)
+		pthread_mutex_lock(&phil->shared_info->fork[phil->r_fork_idx]);
+	else
+		pthread_mutex_lock(&phil->shared_info->fork[phil->l_fork_idx]);
+	
 	cur_time = time_since_start(phil->shared_info);
 	printf(CYAN"%li %i has taken right fork\n"QUIT_COLOR, cur_time, phil->thread_idx);
 
@@ -23,8 +31,17 @@ static void	ft_eat(t_philosopher *phil)
 	sleep_loop(phil, EATING, phil->shared_info->t_to_eat);
 // printf("phil->shared_info->fork[l_fork] = %p\n", &phil->shared_info->fork[l_fork]);
 // printf("phil->shared_info->fork[r_fork] = %p\n", &phil->shared_info->fork[r_fork]);
-	pthread_mutex_unlock(&phil->shared_info->fork[phil->r_fork_idx]);
-	pthread_mutex_unlock(&phil->shared_info->fork[phil->l_fork_idx]);
+	
+	if (phil->thread_idx % 2 == 0)
+	{
+		pthread_mutex_unlock(&phil->shared_info->fork[phil->r_fork_idx]);
+		pthread_mutex_unlock(&phil->shared_info->fork[phil->l_fork_idx]);
+	}
+	else
+	{
+		pthread_mutex_unlock(&phil->shared_info->fork[phil->l_fork_idx]);
+		pthread_mutex_unlock(&phil->shared_info->fork[phil->r_fork_idx]);
+	}
 }
 
 static void ft_sleep(t_philosopher *phil)
@@ -75,7 +92,7 @@ static void	run_actions(t_philosopher *phil)
 		printf(GREEN"%li %i is thinking\n"QUIT_COLOR, cur_time, phil->thread_idx);
 		sleep_loop(phil, THINKING, 100);
 	}
-	while (time_since_start(phil->shared_info) < 2000)
+	while (time_since_start(phil->shared_info) < 3000)
 	{
 		ft_eat(phil);
 		ft_sleep(phil);
