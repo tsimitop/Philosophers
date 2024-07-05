@@ -93,7 +93,7 @@ int	init_shared(t_shared *info, char **argv)
 	// 	return (pthread_mutex_destroy(&info->death_lock), 
 	// 	printf("Mutex initialization failed\n"), 1);
 	// info->philo = ft_calloc(info->philos_total, sizeof(t_philosopher));
-	info->philo = (t_philosopher *)malloc(info->philos_total * sizeof(t_philosopher));
+	info->philo = ft_calloc(info->philos_total, sizeof(t_philosopher));
 	if (!info->philo)
 		return (printf("info->philo allocation failed\n"), 1);
 	// info->fork = ft_calloc(info->philos_total, sizeof(pthread_mutex_t *));
@@ -108,7 +108,7 @@ int	init_shared(t_shared *info, char **argv)
 	// 	i++;
 	// }
 	// info->fork = ft_calloc(info->philos_total, sizeof(pthread_mutex_t));
-	info->fork = (pthread_mutex_t *)malloc(info->philos_total * sizeof(pthread_mutex_t));
+	info->fork = ft_calloc(info->philos_total, sizeof(pthread_mutex_t));
 	if (!info->fork)
 		return (printf("info->fork allocation failed\n"), 1); //FIX PROTECTION
 	// int i = 0;
