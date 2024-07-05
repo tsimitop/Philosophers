@@ -17,7 +17,7 @@ time_t	time_since_start(t_shared *info)
 	return (current_time);
 }
 
-void	sleep_loop(t_philosopher *phil, t_state state, long long time)
+void	sleep_loop(t_philosopher *phil, t_state state, time_t time)
 {
 	time_t	wake;
 
@@ -28,20 +28,7 @@ void	sleep_loop(t_philosopher *phil, t_state state, long long time)
 		wake = time + init_time();
 	else if (state == EATING)
 		wake = (phil->shared_info->t_to_eat) + init_time();
-	if (state == SLEEPING || state == THINKING)
-	{
-		usleep(time / 2);
-		while (wake > init_time())
-		{
-			usleep(50);
-		}
-	}
-	else if (state == EATING)
-	{
-		usleep(time / 2);
-		while (wake > init_time())
-		{
-			usleep(50);
-		}
-	}
+	usleep(time / 2);
+	while (wake > init_time())
+		usleep(50);
 }

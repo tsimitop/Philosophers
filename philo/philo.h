@@ -42,7 +42,8 @@ typedef struct s_shared
 	pthread_mutex_t		death_lock;
 	pthread_mutex_t		printer_lock;
 	t_philosopher		*philo;
-	pthread_mutex_t		**fork;
+	// pthread_mutex_t		**fork;
+	pthread_mutex_t		*fork;
 } t_shared;
 
 typedef struct s_philosopher
@@ -55,6 +56,8 @@ typedef struct s_philosopher
 	int					ate_x_times;
 	long long			last_meal_timestamp;
 	long long			time_since_last_meal;
+	int					r_fork_idx;
+	int					l_fork_idx;
 	pthread_mutex_t		dining_lock;
 	pthread_mutex_t		sleeping_lock;
 	t_shared			*shared_info;
@@ -70,7 +73,7 @@ bool	invalid_input(int argc, char **argv);
 
 // time.c
 time_t	init_time(void);
-void	sleep_loop(t_philosopher *philosoph, t_state state, long long time);
+void	sleep_loop(t_philosopher *philosoph, t_state state, time_t time);
 time_t		time_since_start(t_shared *info);
 
 //init
