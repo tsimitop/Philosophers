@@ -1,5 +1,5 @@
 #include "philo.h"
-//make && ./philo 5 800 200 200
+
 int	main(int argc, char **argv)
 {
 	t_shared		info;

@@ -57,10 +57,7 @@ typedef struct s_philosopher
 	long long			time_since_last_meal;
 	pthread_mutex_t		dining_lock;
 	pthread_mutex_t		sleeping_lock;
-	pthread_mutex_t		state_lock;
 	t_shared			*shared_info;
-	// pthread_mutex_t		*fork;
-	// pthread_mutex_t		*l_fork;
 } t_philosopher;
 
 // parse.c
@@ -87,8 +84,6 @@ void	*ft_calloc(size_t count, size_t size);
 long long	ft_atoll(const char *str);
 
 //actions.c
-// void	*routine(t_shared *info);
-// void	routine(void);
 void	*routine(void *ptr);
 
 #endif
