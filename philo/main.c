@@ -31,10 +31,11 @@ int init_philo(t_shared *info)
 		info->philo[idx].r_fork_idx = idx;
 		info->philo[idx].l_fork_idx = (idx + 1) % info->philos_total;
 		info->philo[idx].your_time_has_come = info->initial_timestamp + info->t_to_die;
+		info->philo[idx].philo_stuffed = false;
 		// if (pthread_mutex_init(&info->philo[idx].sleeping_lock, NULL) != 0)
 		// 	return (printf("Failed to create thread\n"), 1);
-		// if (pthread_mutex_init(&info->philo[idx].dining_lock, NULL) != 0)
-		// 	return (printf("Failed to create thread\n"), 1);
+		if (pthread_mutex_init(&info->philo[idx].dining_lock, NULL) != 0)
+			return (printf("Failed to create thread\n"), 1);
 		if (pthread_mutex_init(&info->fork[idx], NULL) != 0)
 			return (printf("Failed to create thread\n"), 1);
 

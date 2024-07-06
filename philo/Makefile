@@ -4,7 +4,7 @@
 CC = cc
 DEBUG = #-g
 CFLAGS = -Wall -Wextra -Werror #-fsanitize=thread
-LDFLAGS := -lpthread
+LDFLAGS := -pthread
 #dorker valgrind --tool=helgrind
 ################################################################################
 #								PHILO MANDATORY								   #
@@ -16,7 +16,8 @@ SRC =	main.c\
 		time.c\
 		utils.c\
 		actions.c\
-		thread.c
+		thread.c\
+		super.c
 
 OBJ = $(SRC:.c=.o)
 
@@ -29,8 +30,6 @@ $(NAME) : $(OBJ)
 
 $(OBJ) : %.o : %.c
 	@$(CC) -c $(CFLAGS) $(DEBUG) $< -o $@
-#@echo "Building $(OBJ)"
-#@echo "Built $(OBJ)"
 
 clean :
 	@rm -f $(OBJ)

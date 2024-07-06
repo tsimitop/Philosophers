@@ -3,6 +3,7 @@
 int init_thread(t_shared *info)
 {
 	int idx;
+	pthread_t supervisor;
 
 	idx = 0;
 	while (idx < info->philos_total)
@@ -11,6 +12,11 @@ int init_thread(t_shared *info)
 			return (printf("Failed to create thread\n"), 1);
 		idx++;
 	}
+	if (pthread_create(&supervisor, NULL, super_routine, info) != 0)
+		return (printf("Failed to create thread\n"), 1);
+	if (pthread_join(supervisor, NULL) != 0)
+		return (printf("Failed to create thread\n"), 1);
+	
 	idx = 0;
 	while (idx < info->philos_total)
 	{

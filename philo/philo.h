@@ -50,7 +50,7 @@ typedef struct s_philosopher
 	pthread_t			philo_thread;
 	int					thread_idx;
 	// enum e_state		state;
-	int					die_phil;
+	// int					die_phil;
 	bool				dead;
 	int					ate_x_times;
 	long long			last_meal_timestamp;
@@ -58,7 +58,8 @@ typedef struct s_philosopher
 	int					r_fork_idx;
 	int					l_fork_idx;
 	time_t				your_time_has_come;
-	// pthread_mutex_t		dining_lock;
+	pthread_mutex_t		dining_lock;
+	bool				philo_stuffed;
 	// pthread_mutex_t		sleeping_lock;
 	t_shared			*shared_info;
 } t_philosopher;
@@ -84,8 +85,16 @@ int		init_thread(t_shared *info);
 void	ft_bzero(void *s, size_t n);
 void	*ft_calloc(size_t count, size_t size);
 long long	ft_atoll(const char *str);
+void	ft_output(t_philosopher *phil, t_state state);
 
 //actions.c
 void	*routine(void *ptr);
+void	lock_forks(t_philosopher *phil);
+void	unlock_forks(t_philosopher *phil);
+bool	philo_surviving(t_philosopher *phil);
+
+//super.c
+void *super_routine(void *ptr);
+bool	all_philos_stuffed(t_shared *info);
 
 #endif
