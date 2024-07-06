@@ -4,15 +4,10 @@ int init_philo(t_shared *info);
 
 int	main(int argc, char **argv)
 {
-	t_shared		info;
+	t_shared	info;
 
-	if (invalid_input(argc, argv) == true)
-		return (1);
-	if (init_shared(&info, argv))
-		return (1);
-	if (init_philo(&info))
-		return (1);
-	if (init_thread(&info))
+	if (invalid_input(argc, argv) || init_shared(&info, argv) \
+	|| init_philo(&info) || init_thread(&info))
 		return (1);
 	//NA TA KATASTREPSOOOOOOO KI ELEFTHEROSO
 	free(info.fork);
@@ -28,50 +23,24 @@ int init_philo(t_shared *info)
 	while (++idx < info->philos_total)
 	{
 		info->philo[idx].thread_idx = idx + 1;
-		// info->philo[idx].state = THINKING;
 		info->philo[idx].dead = false;
 		info->philo[idx].ate_x_times = 0;
 		info->philo[idx].last_meal_timestamp = info->initial_timestamp;
 		info->philo[idx].time_since_last_meal = 0;
 		info->philo[idx].shared_info = info;
-
 		info->philo[idx].r_fork_idx = idx;
 		info->philo[idx].l_fork_idx = (idx + 1) % info->philos_total;
+		info->philo[idx].your_time_has_come = info->initial_timestamp + info->t_to_die;
 		// if (pthread_mutex_init(&info->philo[idx].sleeping_lock, NULL) != 0)
 		// 	return (printf("Failed to create thread\n"), 1);
 		// if (pthread_mutex_init(&info->philo[idx].dining_lock, NULL) != 0)
-		// 	return (printf("Failed to create thread\n"), 1);
-		// if (pthread_mutex_init(&info->philo[idx].state_lock, NULL) != 0)
 		// 	return (printf("Failed to create thread\n"), 1);
 		if (pthread_mutex_init(&info->fork[idx], NULL) != 0)
 			return (printf("Failed to create thread\n"), 1);
 
 	}
-	// info->philo->l_fork = info->philo[info->philo[idx + 1].thread_idx % info->philos_total].fork;
-
 	return (0);
 }
-
-// int init_philosopher(t_shared *info, int idx)
-// {
-// 	info->philo[idx].thread_idx = idx + 1;
-// 	// info->philo[idx].state = THINKING;
-// 	info->philo[idx].dead = false;
-// 	info->philo[idx].ate_x_times = 0;
-// 	info->philo[idx].last_meal_timestamp = info->initial_timestamp;
-// 	info->philo[idx].time_since_last_meal = 0;
-// 	info->philo[idx].shared_info = info;
-// 	if (pthread_mutex_init(&info->philo[idx].sleeping_lock, NULL) != 0)
-// 		return (printf("Failed to create thread\n"), 1);
-// 	if (pthread_mutex_init(&info->philo[idx].dining_lock, NULL) != 0)
-// 		return (printf("Failed to create thread\n"), 1);
-// 	// if (pthread_mutex_init(&info->philo[idx].state_lock, NULL) != 0)
-// 	// 	return (printf("Failed to create thread\n"), 1);
-// 	if (pthread_mutex_init(&info->fork[idx], NULL) != 0)
-// 		return (printf("Failed to create thread\n"), 1);
-// 	// info->philo->l_fork = info->philo[info->philo[idx + 1].thread_idx % info->philos_total].fork;
-// 	return (0);
-// }
 
 int	init_shared(t_shared *info, char **argv)
 {
@@ -87,37 +56,16 @@ int	init_shared(t_shared *info, char **argv)
 	info->initial_timestamp = init_time();
 	if (info->initial_timestamp < 0)
 		return (1);
-	// if (pthread_mutex_init(&info->death_lock, NULL) != 0)
-	// 	return (printf("Mutex initialization failed\n"), 1);
-	// if (pthread_mutex_init(&info->printer_lock, NULL) != 0)
-	// 	return (pthread_mutex_destroy(&info->death_lock), 
-	// 	printf("Mutex initialization failed\n"), 1);
-	// info->philo = ft_calloc(info->philos_total, sizeof(t_philosopher));
+	if (pthread_mutex_init(&info->death_lock, NULL) != 0)
+		return (printf("Mutex initialization failed\n"), 1);
+	if (pthread_mutex_init(&info->printer_lock, NULL) != 0)
+		return (pthread_mutex_destroy(&info->death_lock), 
+		printf("Mutex initialization failed\n"), 1);
 	info->philo = ft_calloc(info->philos_total, sizeof(t_philosopher));
 	if (!info->philo)
-		return (printf("info->philo allocation failed\n"), 1);
-	// info->fork = ft_calloc(info->philos_total, sizeof(pthread_mutex_t *));
-	// if (!info->fork)
-	// 	return (printf("info->fork allocation failed\n"), 1); //FIX PROTECTION
-	// int i = 0;
-	// while (info->philos_total > i)
-	// {
-	// 	info->fork[i] = ft_calloc( 1, sizeof(pthread_mutex_t));
-	// 	if (!info->fork[i])
-	// 		return (printf("info->philo[idx].fork allocation failed\n"), 1); //FIX PROTECTION
-	// 	i++;
-	// }
-	// info->fork = ft_calloc(info->philos_total, sizeof(pthread_mutex_t));
+		return (pthread_mutex_destroy(&info->death_lock), pthread_mutex_destroy(&info->printer_lock), printf("info->philo allocation failed\n"), 1);
 	info->fork = ft_calloc(info->philos_total, sizeof(pthread_mutex_t));
 	if (!info->fork)
-		return (printf("info->fork allocation failed\n"), 1); //FIX PROTECTION
-	// int i = 0;
-	// while (info->philos_total > i)
-	// {
-	// 	info->fork[i] = ft_calloc( 1, sizeof(pthread_mutex_t));
-	// 	if (!info->fork[i])
-	// 		return (printf("info->philo[idx].fork allocation failed\n"), 1); //FIX PROTECTION
-	// 	i++;
-	// }
+		return (pthread_mutex_destroy(&info->death_lock), pthread_mutex_destroy(&info->printer_lock), printf("info->fork allocation failed\n"), 1); //FIX PROTECTION
 	return (0);
 }

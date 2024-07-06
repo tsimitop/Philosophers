@@ -40,9 +40,8 @@ typedef struct s_shared
 	bool				death_occured;
 	long long			initial_timestamp;
 	pthread_mutex_t		death_lock;
-	pthread_mutex_t		printer_lock;
+	pthread_mutex_t		printer_lock; //remove or keep?
 	t_philosopher		*philo;
-	// pthread_mutex_t		**fork;
 	pthread_mutex_t		*fork;
 } t_shared;
 
@@ -50,7 +49,7 @@ typedef struct s_philosopher
 {
 	pthread_t			philo_thread;
 	int					thread_idx;
-	enum e_state		state;
+	// enum e_state		state;
 	int					die_phil;
 	bool				dead;
 	int					ate_x_times;
@@ -58,8 +57,9 @@ typedef struct s_philosopher
 	long long			time_since_last_meal;
 	int					r_fork_idx;
 	int					l_fork_idx;
-	pthread_mutex_t		dining_lock;
-	pthread_mutex_t		sleeping_lock;
+	time_t				your_time_has_come;
+	// pthread_mutex_t		dining_lock;
+	// pthread_mutex_t		sleeping_lock;
 	t_shared			*shared_info;
 } t_philosopher;
 
@@ -78,7 +78,6 @@ time_t		time_since_start(t_shared *info);
 
 //init
 int		init_shared(t_shared *info, char **argv);
-int		init_philosopher(t_shared *info, int idx);
 int		init_thread(t_shared *info);
 
 //utils.c
