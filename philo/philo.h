@@ -38,11 +38,12 @@ typedef struct s_shared
 	time_t				t_to_sleep;
 	int					times_to_eat;
 	bool				death_occured;
-	long long			initial_timestamp;
+	time_t				initial_timestamp;
 	pthread_mutex_t		death_lock;
 	pthread_mutex_t		printer_lock; //remove or keep?
 	t_philosopher		*philo;
 	pthread_mutex_t		*fork;
+	bool				all_philos_stuffed;
 } t_shared;
 
 typedef struct s_philosopher
@@ -53,12 +54,13 @@ typedef struct s_philosopher
 	// int					die_phil;
 	bool				dead;
 	int					ate_x_times;
-	long long			last_meal_timestamp;
+	time_t			last_meal_timestamp;
 	long long			time_since_last_meal;
 	int					r_fork_idx;
 	int					l_fork_idx;
 	time_t				your_time_has_come;
 	pthread_mutex_t		dining_lock;
+	pthread_mutex_t		death_lock;
 	bool				philo_stuffed;
 	// pthread_mutex_t		sleeping_lock;
 	t_shared			*shared_info;
@@ -96,5 +98,7 @@ bool	philo_surviving(t_philosopher *phil);
 //super.c
 void *super_routine(void *ptr);
 bool	all_philos_stuffed(t_shared *info);
+
+void	*death_checker(t_shared *info);
 
 #endif

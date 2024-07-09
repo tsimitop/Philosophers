@@ -69,3 +69,5 @@ void	ft_output(t_philosopher *phil, t_state state)
 		printf(YELLOW"%li %i died\n"QUIT_COLOR, cur_time, phil->thread_idx);
 	pthread_mutex_unlock(&phil->shared_info->printer_lock);
 }
+
+// time_t	should_die

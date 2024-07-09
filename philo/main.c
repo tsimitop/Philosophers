@@ -2,18 +2,34 @@
 
 int init_philo(t_shared *info);
 
+void	*death_checker(t_shared *info)
+{
+	while (1)
+	{
+		if ((philo_surviving(info->philo)) == false)
+			return (printf("1 EXIT death_checker\n"), NULL);
+		else if (info->all_philos_stuffed == true)
+			return (printf("2 EXIT death_checker\n"), NULL);
+	}
+	return (NULL);
+}
+
 int	main(int argc, char **argv)
 {
 	t_shared	info;
+printf("HI\n");
 
 	if (invalid_input(argc, argv) || init_shared(&info, argv) \
 	|| init_philo(&info) || init_thread(&info))
 		return (1);
+	// death_checker(&info);
+printf("MAIN END\n");
 	//NA TA KATASTREPSOOOOOOO KI ELEFTHEROSO
 	free(info.fork);
 	free(info.philo);
 	return (0);
 }
+
 
 int init_philo(t_shared *info)
 {
@@ -30,7 +46,9 @@ int init_philo(t_shared *info)
 		info->philo[idx].shared_info = info;
 		info->philo[idx].r_fork_idx = idx;
 		info->philo[idx].l_fork_idx = (idx + 1) % info->philos_total;
+printf("ADDITION FOR your_time_has_come: info->initial_timestamp = %li, info->t_to_die = %li\n", info->initial_timestamp, info->t_to_die);
 		info->philo[idx].your_time_has_come = info->initial_timestamp + info->t_to_die;
+printf("DECLARATION: info->philo[%i].your_time_has_come = %li\n", info->philo->thread_idx, info->philo->your_time_has_come);
 		info->philo[idx].philo_stuffed = false;
 		// if (pthread_mutex_init(&info->philo[idx].sleeping_lock, NULL) != 0)
 		// 	return (printf("Failed to create thread\n"), 1);
@@ -46,9 +64,9 @@ int init_philo(t_shared *info)
 int	init_shared(t_shared *info, char **argv)
 {
 	info->philos_total = ft_atoi(argv[1]);
-	info->t_to_die = (time_t)ft_atoll(argv[2]);
-	info->t_to_eat = (time_t)ft_atoll(argv[3]);
-	info->t_to_sleep = (time_t)ft_atoll(argv[4]);
+	info->t_to_die = (time_t)ft_atoi(argv[2]);
+	info->t_to_eat = (time_t)ft_atoi(argv[3]);
+	info->t_to_sleep = (time_t)ft_atoi(argv[4]);
 	if(argv[5])
 		info->times_to_eat = ft_atoi(argv[5]);
 	else
