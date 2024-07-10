@@ -40,7 +40,7 @@ typedef struct s_shared
 	bool				death_occured;
 	time_t				initial_timestamp;
 	pthread_mutex_t		death_lock;
-	pthread_mutex_t		printer_lock; //remove or keep?
+	pthread_mutex_t		printer_lock;
 	t_philosopher		*philo;
 	pthread_mutex_t		*fork;
 	bool				all_philos_stuffed;
@@ -50,20 +50,19 @@ typedef struct s_philosopher
 {
 	pthread_t			philo_thread;
 	int					thread_idx;
-	// enum e_state		state;
+	enum e_state		state;
 	// int					die_phil;
-	bool				dead;
+	// bool				dead;
+	pthread_mutex_t		death_lock;
 	int					ate_x_times;
-	time_t			last_meal_timestamp;
-	long long			time_since_last_meal;
+	time_t				last_meal_timestamp;
+	time_t				time_since_last_meal;
 	int					r_fork_idx;
 	int					l_fork_idx;
-	time_t				your_time_has_come;
 	pthread_mutex_t		dining_lock;
-	pthread_mutex_t		death_lock;
-	bool				philo_stuffed;
-	// pthread_mutex_t		sleeping_lock;
+	pthread_mutex_t		sleeping_lock;
 	t_shared			*shared_info;
+	time_t				your_time_has_come;
 } t_philosopher;
 
 // parse.c
@@ -81,6 +80,7 @@ time_t		time_since_start(t_shared *info);
 
 //init
 int		init_shared(t_shared *info, char **argv);
+int		init_philosopher(t_shared *info, int idx);
 int		init_thread(t_shared *info);
 
 //utils.c
@@ -93,12 +93,6 @@ void	ft_output(t_philosopher *phil, t_state state);
 void	*routine(void *ptr);
 void	lock_forks(t_philosopher *phil);
 void	unlock_forks(t_philosopher *phil);
-bool	philo_surviving(t_philosopher *phil);
-
-//super.c
-void *super_routine(void *ptr);
-bool	all_philos_stuffed(t_shared *info);
-
-void	*death_checker(t_shared *info);
+int		death_checker(t_shared *info);
 
 #endif

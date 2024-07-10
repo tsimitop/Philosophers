@@ -3,7 +3,6 @@
 int init_thread(t_shared *info)
 {
 	int idx;
-	// pthread_t supervisor;
 
 	idx = 0;
 	while (idx < info->philos_total)
@@ -12,22 +11,13 @@ int init_thread(t_shared *info)
 			return (printf("Failed to create thread\n"), 1);
 		idx++;
 	}
-	// if (pthread_create(&supervisor, NULL, super_routine, info) != 0)
-	// 	return (printf("Failed to create thread\n"), 1);
-	// if (pthread_join(supervisor, NULL) != 0)
-	// 	return (printf("Failed to create thread\n"), 1);
-	printf("check line 19 in thread.c\n");
-	death_checker(info);
-	
+	if (death_checker(info) == 1)
+		return (pthread_join(info->philo[idx].philo_thread, NULL), pthread_mutex_destroy(&info->fork[idx]), 0);
 	idx = 0;
-// printf("info->philos_total = %i\n", info->philos_total);
 	while (idx < info->philos_total)
 	{
 		pthread_join(info->philo[idx].philo_thread, NULL);
 		idx++;
-// printf("hiiiiiiii\n");
-// printf("idx = %i\n", idx);
-// printf("info->philos_total = %i\n", info->philos_total);
 	}
 	idx = 0;
 	while (idx < info->philos_total)

@@ -19,8 +19,8 @@ bool	ft_isnumber(char **argv)
 
 bool	ft_isnegative(char **argv)
 {
-// printf("ft_atoi(argv[1]) = %i\t ft_atoi(argv[2]) = %i\t ft_atoi(argv[3]) = %i\t ft_atoi(argv[4]) %i\t\n", ft_atoi(argv[1]), ft_atoi(argv[2]), ft_atoi(argv[3]), ft_atoi(argv[4]));
-	if (ft_atoi(argv[1]) <= 0 || ft_atoi(argv[2]) <= 0 || ft_atoi(argv[3]) <= 0 || ft_atoi(argv[4]) <= 0)
+	if (ft_atoi(argv[1]) <= 0 || ft_atoi(argv[2]) <= 0 || \
+	ft_atoi(argv[3]) <= 0 || ft_atoi(argv[4]) <= 0)
 	{
 		printf("Can accept only positive integer parameters\n");
 		return (true);

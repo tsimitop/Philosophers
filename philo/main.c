@@ -2,34 +2,84 @@
 
 int init_philo(t_shared *info);
 
-void	*death_checker(t_shared *info)
+bool	philo_surviving(t_philosopher *philo)
+{
+// printf("init_time() = %li\tphilo->shared_info->initial_timestamp = %li\tphilo->last_meal_timestamp = %li\t philo->shared_info->t_to_die = %li\n", init_time(), philo->shared_info->initial_timestamp, philo->last_meal_timestamp, philo->shared_info->t_to_die);
+// printf("time_since_start(philo->shared_info) = %li\t(init_time() - philo->last_meal_timestamp) = %li\t philo->shared_info->t_to_die = %li\n", time_since_start(philo->shared_info), (init_time() - philo->last_meal_timestamp), philo->shared_info->t_to_die);
+	pthread_mutex_lock(&philo->death_lock);
+	if (philo->your_time_has_come < init_time())
+	{
+		pthread_mutex_unlock(&philo->death_lock);
+		pthread_mutex_lock(&philo->shared_info->death_lock);
+		ft_output(philo, DIED);
+		philo->shared_info->death_occured = true;
+		pthread_mutex_unlock(&(philo->shared_info->death_lock));
+		return false;
+	}
+	else
+	{
+		pthread_mutex_unlock(&philo->death_lock);
+		return true;
+	}
+}
+
+int	death_checker(t_shared *info)
 {
 	while (1)
 	{
 		if ((philo_surviving(info->philo)) == false)
-			return (printf("1 EXIT death_checker\n"), NULL);
+			return (printf("1 EXIT death_checker\n"), 1);
 		else if (info->all_philos_stuffed == true)
-			return (printf("2 EXIT death_checker\n"), NULL);
+			return (printf("2 EXIT death_checker\n"), 1);
 	}
-	return (NULL);
+	return (0);
 }
+
+//____________________________________________________________
+// void	check_for_deads(t_data *d, t_philosopher *p)
+// {
+// 	int	i;
+
+// 	while (1)
+// 	{
+// 		i = 0;
+// 		pthread_mutex_lock(&(d->flag_ate_mutex));
+// 		if (d->flag_all_ate != 0)
+// 		{
+// 			pthread_mutex_unlock(&(d->flag_ate_mutex));
+// 			break ;
+// 		}
+// 		pthread_mutex_unlock(&(d->flag_ate_mutex));
+// 		while (d->times_to_eat != -1
+// 			&& i < d->number_of_philo && p[i].times_ate >= d->times_to_eat)
+// 			i++;
+// 		if (i == d->number_of_philo)
+// 		{
+// 			pthread_mutex_lock(&(d->flag_ate_mutex));
+// 			d->flag_all_ate = 1;
+// 			pthread_mutex_unlock(&(d->flag_ate_mutex));
+// 		}
+// 		keep_checking(d, p);
+// 		if (d->flag_dead == 1)
+// 			break ;
+// 	}
+// }
+//____________________________________________________________
 
 int	main(int argc, char **argv)
 {
-	t_shared	info;
-printf("HI\n");
+	t_shared		info;
 
+printf("check main.c line 38\n");
+printf("check actions.c line 95");
 	if (invalid_input(argc, argv) || init_shared(&info, argv) \
 	|| init_philo(&info) || init_thread(&info))
 		return (1);
-	// death_checker(&info);
-printf("MAIN END\n");
 	//NA TA KATASTREPSOOOOOOO KI ELEFTHEROSO
 	free(info.fork);
 	free(info.philo);
 	return (0);
 }
-
 
 int init_philo(t_shared *info)
 {
@@ -39,24 +89,20 @@ int init_philo(t_shared *info)
 	while (++idx < info->philos_total)
 	{
 		info->philo[idx].thread_idx = idx + 1;
-		info->philo[idx].dead = false;
+		// info->philo[idx].dead = false;
 		info->philo[idx].ate_x_times = 0;
 		info->philo[idx].last_meal_timestamp = info->initial_timestamp;
 		info->philo[idx].time_since_last_meal = 0;
 		info->philo[idx].shared_info = info;
 		info->philo[idx].r_fork_idx = idx;
 		info->philo[idx].l_fork_idx = (idx + 1) % info->philos_total;
-printf("ADDITION FOR your_time_has_come: info->initial_timestamp = %li, info->t_to_die = %li\n", info->initial_timestamp, info->t_to_die);
 		info->philo[idx].your_time_has_come = info->initial_timestamp + info->t_to_die;
-printf("DECLARATION: info->philo[%i].your_time_has_come = %li\n", info->philo->thread_idx, info->philo->your_time_has_come);
-		info->philo[idx].philo_stuffed = false;
 		// if (pthread_mutex_init(&info->philo[idx].sleeping_lock, NULL) != 0)
 		// 	return (printf("Failed to create thread\n"), 1);
-		if (pthread_mutex_init(&info->philo[idx].dining_lock, NULL) != 0)
-			return (printf("Failed to create thread\n"), 1);
+		// if (pthread_mutex_init(&info->philo[idx].dining_lock, NULL) != 0)
+		// 	return (printf("Failed to create thread\n"), 1);
 		if (pthread_mutex_init(&info->fork[idx], NULL) != 0)
 			return (printf("Failed to create thread\n"), 1);
-
 	}
 	return (0);
 }
@@ -64,9 +110,9 @@ printf("DECLARATION: info->philo[%i].your_time_has_come = %li\n", info->philo->t
 int	init_shared(t_shared *info, char **argv)
 {
 	info->philos_total = ft_atoi(argv[1]);
-	info->t_to_die = (time_t)ft_atoi(argv[2]);
-	info->t_to_eat = (time_t)ft_atoi(argv[3]);
-	info->t_to_sleep = (time_t)ft_atoi(argv[4]);
+	info->t_to_die = (time_t)ft_atoll(argv[2]);
+	info->t_to_eat = (time_t)ft_atoll(argv[3]);
+	info->t_to_sleep = (time_t)ft_atoll(argv[4]);
 	if(argv[5])
 		info->times_to_eat = ft_atoi(argv[5]);
 	else
