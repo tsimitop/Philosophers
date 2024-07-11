@@ -40,7 +40,7 @@ typedef struct s_shared
 	bool				death_occured;
 	time_t				initial_timestamp;
 	pthread_mutex_t		death_lock;
-	pthread_mutex_t		printer_lock;
+	pthread_mutex_t		print_lock;
 	t_philosopher		*philo;
 	pthread_mutex_t		*fork;
 	bool				all_philos_stuffed;
@@ -94,5 +94,6 @@ void	*routine(void *ptr);
 void	lock_forks(t_philosopher *phil);
 void	unlock_forks(t_philosopher *phil);
 int		death_checker(t_shared *info);
+bool	all_stuffed(t_shared *info);
 
 #endif

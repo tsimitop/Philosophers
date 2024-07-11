@@ -10,6 +10,7 @@ static void	ft_eat(t_philosopher *phil)
 	ft_output(phil, EATING);
 	cur_time = init_time();
 	pthread_mutex_lock(&phil->dining_lock);
+	phil->ate_x_times++;
 	phil->last_meal_timestamp = cur_time;
 	phil->your_time_has_come = phil->last_meal_timestamp + phil->shared_info->t_to_die;
 	pthread_mutex_unlock(&phil->dining_lock);
@@ -85,35 +86,31 @@ static void	run_actions(t_philosopher *phil)
 		printf(GREEN"%li %i is thinking\n"QUIT_COLOR, cur_time, phil->thread_idx);
 		sleep_loop(phil, THINKING, 100);
 	}
-	while (1) //(time_since_start(phil->shared_info) < 3000)
+	while (1)
 	{
 		ft_eat(phil);
 		ft_sleep(phil);
 		ft_think(phil);
 	}
 }
-// bool all_stuffed(t_shared *info)
-// {
-// 	int	i;
-// 	int	j;
+bool	all_stuffed(t_shared *info)
+{
+	int	i;
 
-// 	j = 0;
-// 	i = 0;
-// 	while (1)
-// 	{
-// 		pthread_mutex_lock(&info->death_lock);
-// 		if (info->all_philos_stuffed)
-// 			return (pthread_mutex_unlock(&info->death_lock), true);
-// 		pthread_mutex_unlock(&info->death_lock);
-// 		// while (info->philos_total > i)
-// 		// {
-// 		// 	if (info->philo[j].ate_x_times == info->times_to_eat)
-// 		// 		i++;
-// 		// }
-// 		while (info->times_to_eat > 0 && info->philos_total > i  )
-// 		{
-// 			if (info->philo[i].ate_x_times >= info->times_to_eat)
-// 		}
-
-// 	}
-// }
+	i = 0;
+	while (1)
+	{
+		pthread_mutex_lock(&info->death_lock);
+		if (info->all_philos_stuffed)
+			return (pthread_mutex_unlock(&info->death_lock), true);
+		pthread_mutex_unlock(&info->death_lock);
+		while (info->philos_total > i && info->philo[i].ate_x_times >= info->times_to_eat)
+			i++;
+		if (i == info->philos_total)
+		{
+			pthread_mutex_lock(&info->death_lock);
+			info->all_philos_stuffed = true;
+			pthread_mutex_unlock(&info->death_lock);
+		}
+	}
+}
