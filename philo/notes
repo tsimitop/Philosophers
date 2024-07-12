@@ -1,0 +1,7 @@
+εάν αποτύχει η δημιουργία:
+		if (pthread_create(&(info->philo[idx].philo_thread), NULL, routine, &(info->philo[idx])) != 0)
+			return (printf("Failed to create thread\n"), 1);
+πρεπει:
+να κάνω join για κάθε ένα που δημιουργήθηκε επιτυχώς
+να καταστρέψω τα μιουτεξ για κάθε φιλόσοφο
+να ελευθερώσω τον κατειλλημένο χώρο

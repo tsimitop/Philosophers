@@ -13,18 +13,18 @@ int init_thread(t_shared *info)
 	}
 	if (death_checker(info) == 1)
 		return (pthread_join(info->philo[idx].philo_thread, NULL), pthread_mutex_destroy(&info->fork[idx]), 0);
-	// idx = 0;
-	// while (idx < info->philos_total)
-	// {
-	// 	pthread_join(info->philo[idx].philo_thread, NULL);
-	// 	idx++;
-	// }
-	// idx = 0;
-	// while (idx < info->philos_total)
-	// {
-	// 	pthread_mutex_destroy(&info->fork[idx]);
-	// 	idx++;
-	// }
+	idx = 0;
+	while (idx < info->philos_total)
+	{
+		pthread_join(info->philo[idx].philo_thread, NULL);
+		idx++;
+	}
+	idx = 0;
+	while (idx < info->philos_total)
+	{
+		pthread_mutex_destroy(&info->fork[idx]);
+		idx++;
+	}
 	return (0);
 }
 
