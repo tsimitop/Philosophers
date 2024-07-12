@@ -94,6 +94,10 @@ void	*routine(void *ptr);
 void	lock_forks(t_philosopher *phil);
 void	unlock_forks(t_philosopher *phil);
 int		death_checker(t_shared *info);
-bool	all_stuffed(t_shared *info);
+// bool	all_stuffed(t_shared *info);
+bool	all_stuffed(t_philosopher philo);
+
+void	ft_exit_program(char *msg, t_shared *info, int idx);
+bool	philo_surviving(t_philosopher philo);
 
 #endif

@@ -2,36 +2,86 @@
 
 int init_philo(t_shared *info);
 
-bool	philo_surviving(t_philosopher *philo)
+bool	philo_surviving(t_philosopher philo)
 {
-	pthread_mutex_lock(&philo->death_lock);
-	if (philo->your_time_has_come < init_time())
+	pthread_mutex_lock(&philo.shared_info->death_lock);
+	if (philo.shared_info->death_occured == true)
+		return (pthread_mutex_unlock(&philo.shared_info->death_lock), false);
+	pthread_mutex_unlock(&philo.shared_info->death_lock);
+	pthread_mutex_lock(&philo.death_lock);
+// pthread_mutex_lock(&philo.shared_info->print_lock);
+// printf("HEY\n");
+// pthread_mutex_unlock(&philo.shared_info->print_lock);
+	if (philo.your_time_has_come < init_time())
 	{
-		pthread_mutex_unlock(&philo->death_lock);
-		pthread_mutex_lock(&philo->shared_info->death_lock);
-		ft_output(philo, DIED);
-		philo->shared_info->death_occured = true;
-		pthread_mutex_unlock(&(philo->shared_info->death_lock));
-		return false;
+		pthread_mutex_unlock(&philo.death_lock);
+		pthread_mutex_lock(&philo.shared_info->death_lock);
+		ft_output(&philo, DIED);
+		philo.shared_info->death_occured = true;
+		return (pthread_mutex_unlock(&philo.shared_info->death_lock), false);
 	}
 	else
-	{
-		pthread_mutex_unlock(&philo->death_lock);
-		return true;
-	}
+		return (pthread_mutex_unlock(&philo.death_lock), true);
 }
 
 int	death_checker(t_shared *info)
 {
-	while (1)
+	int	idx;
+
+	idx = 0;
+	while (idx < info->philos_total)
 	{
-		// if ((philo_surviving(info->philo)) == false)
-		// 	return (1);
-		if (all_stuffed(info) == true)
+		if ((philo_surviving(info->philo[idx])) == false)
 			return (1);
+		idx++;
 	}
 	return (0);
 }
+
+
+bool	all_stuffed(t_philosopher philo)
+{
+	int	i;
+
+	i = 0;
+	pthread_mutex_lock(&philo.shared_info->death_lock);
+	if (philo.shared_info->all_philos_stuffed == true)
+		return (pthread_mutex_unlock(&philo.shared_info->death_lock), true);
+	pthread_mutex_unlock(&philo.shared_info->death_lock);
+	while (philo.shared_info->philos_total > i && philo.shared_info->philo[i].ate_x_times >= philo.shared_info->times_to_eat)
+		i++;
+	if (i == philo.shared_info->philos_total)
+	{
+		pthread_mutex_lock(&philo.shared_info->death_lock);
+printf("YO\n");
+		philo.shared_info->all_philos_stuffed = true;
+		pthread_mutex_unlock(&philo.shared_info->death_lock);
+		return (true);
+	}
+	return (false);
+}
+
+// bool	all_stuffed(t_shared *info)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	pthread_mutex_lock(&info->death_lock);
+// 	if (info->all_philos_stuffed == true)
+// 		return (pthread_mutex_unlock(&info->death_lock), true);
+// 	pthread_mutex_unlock(&info->death_lock);
+// 	while (info->philos_total > i && info->philo[i].ate_x_times >= info->times_to_eat)
+// 		i++;
+// 	if (i == info->philos_total)
+// 	{
+// // printf("YO\n");
+// 		pthread_mutex_lock(&info->death_lock);
+// 		info->all_philos_stuffed = true;
+// 		pthread_mutex_unlock(&info->death_lock);
+// 		return (true);
+// 	}
+// 	return (false);
+// }
 
 int	main(int argc, char **argv)
 {
@@ -105,31 +155,3 @@ int	init_shared(t_shared *info, char **argv)
 		return (1);
 	return (0);
 }
-
-// int	init_shared(t_shared *info, char **argv)
-// {
-// 	info->philos_total = ft_atoi(argv[1]);
-// 	info->t_to_die = (time_t)ft_atoll(argv[2]);
-// 	info->t_to_eat = (time_t)ft_atoll(argv[3]);
-// 	info->t_to_sleep = (time_t)ft_atoll(argv[4]);
-// 	if(argv[5])
-// 		info->times_to_eat = ft_atoi(argv[5]);
-// 	else
-// 		info->times_to_eat = 2147483640;
-// 	info->death_occured = false;
-// 	info->initial_timestamp = init_time();
-// 	if (info->initial_timestamp < 0)
-// 		return (1);
-// 	if (pthread_mutex_init(&info->death_lock, NULL) != 0)
-// 		return (printf("Mutex initialization failed\n"), 1);
-// 	if (pthread_mutex_init(&info->print_lock, NULL) != 0)
-// 		return (pthread_mutex_destroy(&info->death_lock), 
-// 		printf("Mutex initialization failed\n"), 1);
-// 	info->philo = ft_calloc(info->philos_total, sizeof(t_philosopher));
-// 	if (!info->philo)
-// 		return (pthread_mutex_destroy(&info->death_lock), pthread_mutex_destroy(&info->print_lock), printf("info->philo allocation failed\n"), 1);
-// 	info->fork = ft_calloc(info->philos_total, sizeof(pthread_mutex_t));
-// 	if (!info->fork)
-// 		return (pthread_mutex_destroy(&info->death_lock), pthread_mutex_destroy(&info->print_lock), printf("info->fork allocation failed\n"), 1); //FIX PROTECTION
-// 	return (0);
-// }

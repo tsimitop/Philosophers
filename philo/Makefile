@@ -2,7 +2,7 @@
 #								CONSTANTS									   #
 ################################################################################
 CC = cc
-DEBUG = #-g
+DEBUG = -g
 CFLAGS = -Wall -Wextra -Werror #-fsanitize=thread
 LDFLAGS := -pthread
 #dorker valgrind --tool=helgrind

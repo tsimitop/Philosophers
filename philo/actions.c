@@ -9,8 +9,9 @@ static void	ft_eat(t_philosopher *phil)
 	lock_forks(phil);
 	ft_output(phil, EATING);
 	cur_time = init_time();
+printf("check if death everywhere\n");
 	pthread_mutex_lock(&phil->dining_lock);
-	// phil->ate_x_times++;
+	phil->ate_x_times++;
 	phil->last_meal_timestamp = cur_time;
 	phil->your_time_has_come = phil->last_meal_timestamp + phil->shared_info->t_to_die;
 	pthread_mutex_unlock(&phil->dining_lock);
@@ -92,33 +93,5 @@ static void	run_actions(t_philosopher *phil)
 		ft_eat(phil);
 		ft_sleep(phil);
 		ft_think(phil);
-	}
-}
-
-bool	all_stuffed(t_shared *info)
-{
-	int	i;
-
-	i = 0;
-	while (1)
-	{
-		pthread_mutex_lock(&info->death_lock);
-		// if (info->death_occured == true)
-		// 	return (pthread_mutex_unlock(&info->death_lock), true);
-		if (info->all_philos_stuffed)
-		{
-			// info->death_occured = true;
-			return (pthread_mutex_unlock(&info->death_lock), true);
-		}
-		pthread_mutex_unlock(&info->death_lock);
-		while (info->philos_total > i && info->philo[i].ate_x_times >= info->times_to_eat)
-			i++;
-		if (i == info->philos_total)
-		{
-			pthread_mutex_lock(&info->death_lock);
-			info->all_philos_stuffed = true;
-			// info->death_occured = true;
-			pthread_mutex_unlock(&info->death_lock);
-		}
 	}
 }
