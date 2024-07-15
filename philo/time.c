@@ -17,7 +17,7 @@ time_t	time_since_start(t_shared *info)
 	return (current_time);
 }
 
-void	sleep_loop(t_philosopher *phil, t_state state, time_t time)
+int	sleep_loop(t_philosopher *phil, t_state state, time_t time)
 {
 	time_t	wake;
 
@@ -28,7 +28,28 @@ void	sleep_loop(t_philosopher *phil, t_state state, time_t time)
 		wake = time + init_time();
 	else if (state == EATING)
 		wake = (phil->shared_info->t_to_eat) + init_time();
+
+		//alla3e to gia sleep na mhn tsekarei thanato
+	// if (boring_death_checkup(phil) == true)
+	// 	return (1);
+	if (time > phil->your_time_has_come - phil->shared_info->t_to_eat) //time > phil->your_time_has_come || 
+		return (1);
 	usleep(time / 2);
+	// if (boring_death_checkup(phil) == true)
+	// 	return (1);
 	while (wake > init_time())
-		usleep(50);
+	{
+		usleep(1000);
+	}
+	// if (boring_death_checkup(phil) == true)
+	// 	return (1);
+	// if (phil->shared_info->death_occured == true)
+	// 	printf("sleep_loop: DEATH OCCURED\n");
+	// if (phil->shared_info->all_philos_stuffed == true)
+	// 	printf("sleep_loop: ALL PHILOS STUFFED\n");
+	// if (phil->shared_info->death_occured == false)
+	// 	printf("sleep_loop: DEATH DID NOT OCCUR\n");
+	// if (phil->shared_info->all_philos_stuffed == false)
+	// 	printf("sleep_loop: NOT ALL PHILOS STUFFED\n");
+	return (0);
 }

@@ -33,36 +33,37 @@ typedef struct s_philosopher	t_philosopher;
 typedef struct s_shared
 {
 	int					philos_total;
+	int					times_to_eat;
+	bool				death_occured;
+	bool				all_philos_stuffed;
 	time_t				t_to_die;
 	time_t				t_to_eat;
 	time_t				t_to_sleep;
-	int					times_to_eat;
-	bool				death_occured;
 	time_t				initial_timestamp;
+	t_philosopher		*philo;
 	pthread_mutex_t		death_lock;
 	pthread_mutex_t		print_lock;
-	t_philosopher		*philo;
 	pthread_mutex_t		*fork;
-	bool				all_philos_stuffed;
+	// pthread_mutex_t		silly_lock;
 } t_shared;
 
 typedef struct s_philosopher
 {
-	pthread_t			philo_thread;
-	int					thread_idx;
-	enum e_state		state;
+	// enum e_state		state;
 	// int					die_phil;
 	// bool				dead;
-	pthread_mutex_t		death_lock;
+	// pthread_mutex_t		sleeping_lock;
+	int					thread_idx;
 	int					ate_x_times;
-	time_t				last_meal_timestamp;
-	time_t				time_since_last_meal;
 	int					r_fork_idx;
 	int					l_fork_idx;
-	pthread_mutex_t		dining_lock;
-	pthread_mutex_t		sleeping_lock;
-	t_shared			*shared_info;
+	// time_t				time_since_last_meal;
+	// time_t				last_meal_timestamp;
 	time_t				your_time_has_come;
+	t_shared			*shared_info;
+	pthread_t			philo_thread;
+	// pthread_mutex_t		dining_lock;
+	// pthread_mutex_t		death_lock;
 } t_philosopher;
 
 // parse.c
@@ -75,12 +76,12 @@ bool	invalid_input(int argc, char **argv);
 
 // time.c
 time_t	init_time(void);
-void	sleep_loop(t_philosopher *philosoph, t_state state, time_t time);
+int		sleep_loop(t_philosopher *philosoph, t_state state, time_t time);
 time_t		time_since_start(t_shared *info);
 
 //init
 int		init_shared(t_shared *info, char **argv);
-int		init_philosopher(t_shared *info, int idx);
+// int		init_philosopher(t_shared *info, int idx);
 int		init_thread(t_shared *info);
 
 //utils.c
@@ -91,7 +92,7 @@ void	ft_output(t_philosopher *phil, t_state state);
 
 //actions.c
 void	*routine(void *ptr);
-void	lock_forks(t_philosopher *phil);
+int		lock_forks(t_philosopher *phil);
 void	unlock_forks(t_philosopher *phil);
 int		death_checker(t_shared *info);
 // bool	all_stuffed(t_shared *info);
@@ -99,5 +100,6 @@ bool	all_stuffed(t_philosopher philo);
 
 void	ft_exit_program(char *msg, t_shared *info, int idx);
 bool	philo_surviving(t_philosopher philo);
+bool	boring_death_checkup(t_philosopher *phil);
 
 #endif
