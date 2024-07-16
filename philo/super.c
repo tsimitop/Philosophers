@@ -1,46 +1,95 @@
-// #include "philo.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   super.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tsimitop <tsimitop@student.42heilbronn.    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/16 14:18:56 by tsimitop          #+#    #+#             */
+/*   Updated: 2024/07/16 15:38:22 by tsimitop         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-// void *super_routine(void *ptr)
-// {
-// 	t_shared *info;
-// 	int	i;
+#include "philo.h"
 
-// 	i = 0;
-// 	info = (t_shared *)ptr;
+int	philos_death_flag_check(t_shared *info)
+{
+	int	idx;
 
-// 	while (all_philos_stuffed(info) == false) // && info->death_occured == false
-// 	{
-// 		// if (info->death_occured == true)
-// 		// {
-// 		// 	printf("super_routine TRUE!\n");
-// 		// 	break ;
-// 		// }
-// 		if (info->philo[i].dead == true)
-// 		{
-// 			ft_output(&info->philo[i], DIED);
-// 			break ;
-// 		}
-// 		i++;
-// 	}
-// 	return (NULL);
-// }
+	idx = 0;
+	while (idx < info->philos_total)
+	{
+		pthread_mutex_lock(&info->death_lock);
+		if ((philo_surviving(info->philo[idx]) == false))
+		{
+			pthread_mutex_unlock(&info->death_lock);
+			return (1);
+		}
+		pthread_mutex_unlock(&info->death_lock);
+		idx++;
+	}
+	return (0);
+}
 
-// bool	all_philos_stuffed(t_shared *info)
-// {
-// 	int i;
-// 	int	check;
+int	philos_stuffed_flag_check(t_shared *info)
+{
+	int	idx;
 
-// 	i = 0;
-// 	check = 1;
-// 	while (info->philos_total > i)
-// 	{
-// 		if (info->philo[i].philo_stuffed == true)
-// 			check = 1;
-// 		else if (info->philo[i].philo_stuffed == false)
-// 			check = 0;
-// 		if (check == 0)
-// 			return (false);
-// 		i++;
-// 	}
-// 	return (true);
-// }
+	idx = 0;
+	while (idx < info->philos_total)
+	{
+		pthread_mutex_lock(&info->death_lock);
+		if (all_stuffed(info->philo[idx]) == true)
+		{
+			pthread_mutex_unlock(&info->death_lock);
+			return (1);
+		}
+		pthread_mutex_unlock(&info->death_lock);
+		idx++;
+	}
+	return (0);
+}
+
+bool	philo_surviving(t_philosopher philo)
+{
+	if (philo.shared_info->death_occured == true)
+		return (false);
+	if (philo.your_time_has_come < time_since_start(philo.shared_info))
+	{
+		ft_output(&philo, DIED);
+		philo.shared_info->death_occured = true;
+		return (false);
+	}
+	return (true);
+}
+
+bool	all_stuffed(t_philosopher philo)
+{
+	int	i;
+
+	i = 0;
+	if (philo.shared_info->all_philos_stuffed == true)
+		return (true);
+	while (philo.shared_info->philos_total > i)
+	{
+		if (philo.shared_info->philo[i].ate_x_times < \
+		philo.shared_info->times_to_eat)
+			break ;
+		i++;
+	}
+	if (i == philo.shared_info->philos_total)
+	{
+		philo.shared_info->all_philos_stuffed = true;
+		return (true);
+	}
+	return (false);
+}
+
+bool	boring_death_checkup(t_philosopher *phil)
+{
+	pthread_mutex_lock(&phil->shared_info->death_lock);
+	if (phil->shared_info->death_occured || \
+	phil->shared_info->all_philos_stuffed)
+		return (pthread_mutex_unlock(&phil->shared_info->death_lock), true);
+	return (pthread_mutex_unlock(&phil->shared_info->death_lock), false);
+}

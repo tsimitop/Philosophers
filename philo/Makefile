@@ -16,6 +16,7 @@ SRC =	main.c\
 		time.c\
 		utils.c\
 		actions.c\
+		actions_helper.c\
 		thread.c\
 		super.c
 

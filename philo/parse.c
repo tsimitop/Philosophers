@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: tsimitop <tsimitop@student.42heilbronn.    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/16 14:18:42 by tsimitop          #+#    #+#             */
+/*   Updated: 2024/07/16 15:22:26 by tsimitop         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 bool	ft_isnumber(char **argv)
@@ -82,18 +94,4 @@ int	ft_atoi(char *str)
 		i++;
 	}
 	return (result * sign);
-}
-
-bool	invalid_input(int argc, char **argv)
-{
-	if (argc < 5 || argc > 6)
-	{
-		printf("Correct input is:\n./philo number_of_philos time_to_die \
-time_to_eat time_to_sleep [number_of_times_each_philo_must_eat]\n");
-		return (true);
-	}
-	if (ft_isnumber(argv) == false || ft_isnegative(argv) == true || \
-	init_time() < 0)
-		return (true);
-	return (false);
 }
