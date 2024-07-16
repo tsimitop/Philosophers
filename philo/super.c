@@ -6,7 +6,7 @@
 /*   By: tsimitop <tsimitop@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:18:56 by tsimitop          #+#    #+#             */
-/*   Updated: 2024/07/16 15:38:22 by tsimitop         ###   ########.fr       */
+/*   Updated: 2024/07/16 17:27:31 by tsimitop         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,10 @@ bool	philo_surviving(t_philosopher philo)
 		return (false);
 	if (philo.your_time_has_come < time_since_start(philo.shared_info))
 	{
-		ft_output(&philo, DIED);
 		philo.shared_info->death_occured = true;
+		pthread_mutex_unlock(&philo.shared_info->death_lock);
+		ft_output(&philo, DIED);
+		pthread_mutex_lock(&philo.shared_info->death_lock);
 		return (false);
 	}
 	return (true);

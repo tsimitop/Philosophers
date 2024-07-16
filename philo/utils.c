@@ -6,7 +6,7 @@
 /*   By: tsimitop <tsimitop@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:19:16 by tsimitop          #+#    #+#             */
-/*   Updated: 2024/07/16 14:25:36 by tsimitop         ###   ########.fr       */
+/*   Updated: 2024/07/16 17:24:00 by tsimitop         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,15 +69,15 @@ void	ft_output(t_philosopher *phil, t_state state)
 
 	pthread_mutex_lock(&phil->shared_info->print_lock);
 	cur_time = time_since_start(phil->shared_info);
-	if (state == GOT_FORK)
+	if (state == GOT_FORK && boring_death_checkup(phil) == false)
 		printf(CYAN"%li %i has taken a fork\n"QUIT_COLOR, \
 		cur_time, phil->thread_idx);
-	else if (state == EATING)
+	else if (state == EATING && boring_death_checkup(phil) == false)
 		printf(BLUE"%li %i is eating\n"QUIT_COLOR, cur_time, phil->thread_idx);
-	else if (state == SLEEPING)
+	else if (state == SLEEPING && boring_death_checkup(phil) == false)
 		printf(PURPLE"%li %i is sleeping\n"QUIT_COLOR, cur_time, \
 		phil->thread_idx);
-	else if (state == THINKING)
+	else if (state == THINKING && boring_death_checkup(phil) == false)
 		printf(GREEN"%li %i is thinking\n"QUIT_COLOR, cur_time, \
 		phil->thread_idx);
 	else if (state == DIED)
