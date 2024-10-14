@@ -67,7 +67,7 @@ void	*routine(void *ptr)
 	phil = (t_philosopher *)ptr;
 	if (!phil || !phil->shared_info)
 		return (printf("Philosopher or shared_info is NULL\n"), NULL);
-	if (phil->thread_idx % 2 != 1)
+	if (phil->thread_idx % 2 != 1 || phil->thread_idx == phil.philos_total)
 	{
 		ft_output(phil, THINKING);
 		if (sleep_loop(phil, THINKING, phil->shared_info->t_to_eat) == 1)
